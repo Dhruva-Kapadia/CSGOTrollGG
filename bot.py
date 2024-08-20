@@ -1,6 +1,10 @@
 import discord
 from discord.ext import commands 
 import responses
+from dotenv import load_dotenv
+import os
+
+load_dotenv()  
 
 async def send_message(ctx, *, message):
     try:
@@ -13,8 +17,8 @@ async def send_message(ctx, *, message):
 
 def run_discord_bot():
     
-    TOKEN = 'MTE2MTAwMjM4ODE1NzY0NDk1MA.G88ILP.TSQ8mAY0wwJBHKhuYCCwEEvBmv8h_XEuOFNW8Q'
-    intents=discord.Intents.default()
+    TOKEN = os.getenv('DISCORD_BOT_TOKEN')
+    intents=discord.Intents.all()
     intents.message_content = True
     client = commands.Bot(command_prefix = '>', intents = intents)
 
@@ -26,14 +30,17 @@ def run_discord_bot():
     async def hello(ctx):
         await ctx.send(f"Hey there, {ctx.author.mention}!")
 
-    @client.command(name="Roll")
+    @client.command(aliases=["Roll", "roll"])
     async def sendembed(ctx):
-        embeded_msg.set_author(text="Author Text", icon_url=ctx.author.avatar)
-        embeded_msg = discord.Embed(title = "Title of embed", description="Description", color=discord.color.green())
-        embeded_msg.set_thumbnail(url="https://i.imgur.com/u1JDiwv.jpeg")
-        embeded_msg.add_field(name = "Name of Field", Value="Value of Field", inline=True)
-        embeded_msg.set_image(url=ctx.guild.icon)
-        embeded_msg.set_footer(text="Footer Text", icon_url=ctx.author.avatar)
+            embed = discord.Embed(title="Title of embed", description="Description", color=discord.Color.blue())
+            embed.set_thumbnail(url="https://i.imgur.com/u1JDiwv.jpeg")
+            embed.add_field(name="Name of Field", value="Value of Field", inline=False)
+            guild_icon_url = str(ctx.guild.icon.url)         
+            embed.set_image(url=guild_icon_url)
+            embed.set_footer(text="Footer Text", icon_url=ctx.author.avatar)
+            
+            await ctx.send(embed=embed)
+
   
         
    
