@@ -39,7 +39,7 @@ def get_skin_data(skin_id):
             cursor.execute(query_skin, skin_values)
             
             result_1 = cursor.fetchone()
-            result_2 = []
+            result_2 = ['','']
             
             collection_id = result_1[2]
             
