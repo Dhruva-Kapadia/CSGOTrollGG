@@ -1,6 +1,7 @@
 [
   {
     "pool_id": 1,
+    "souvenir": 0,
     "pool": [
       {
         "id": "crate-4904",

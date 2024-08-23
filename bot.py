@@ -61,7 +61,7 @@ def select_case_from_pool(json_data):
         weights = [case.get('odds', case.get('odd', 0)) for case in pool_cases]
         
         selected_case = random.choices(case_ids, weights=weights, k=1)[0]
-        return selected_case
+        return selected_case, pool['souvenir']
     
 def select_standard_rarity():   #Rarity choice for standard cases based on odds
     items = list(RARITY_STANDARD.keys())
@@ -73,10 +73,15 @@ def select_souvenir_rarity():   #Rarity choice for souvenir packages based on so
     weights = list(RARITY_SOUVENIR.values())
     return random.choices(items, weights, k=1)[0]
 
-def gacha():
-    json_data = load_json_file('C:\DKC\CSGOTrollGG\scripts\data\drop_pool.json')
-    selected_case = select_case_from_pool(json_data)
-    selected_rarity = select_standard_rarity()
+def gacha():    #The real gacha happens here
+    json_data = load_json_file('.\scripts\data\drop_pool.json')
+    selected_case, souvenir = select_case_from_pool(json_data)
+    
+    selected_rarity = ''
+    if souvenir:
+        selected_rarity = select_souvenir_rarity()
+    else:
+        selected_rarity = select_standard_rarity()
 
     try:
         connection = get_db_connection()
