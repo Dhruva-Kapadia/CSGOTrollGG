@@ -26,7 +26,7 @@ def run_discord_bot():
     async def reset_can_claim():
         while True:
             try:
-                await asyncio.sleep(1)
+                await asyncio.sleep(3600)
                 
                 connection = get_db_connection()
                 

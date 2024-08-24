@@ -4,6 +4,29 @@ from mysql.connector import Error
 from db_connect import get_db_connection
 import asyncio
 
+COLOURS = {
+            "rarity_common_weapon": 0xb0c3d9,       #Gray
+            "rarity_uncommon_weapon": 0x5e98d9,     #Light_Blue
+            "rarity_rare_weapon": 0x4b69ff,         #Navy_Blue
+            "rarity_mythical_weapon": 0x8847ff,     #Purple
+            "rarity_legendary_weapon": 0xd32ce6,    #Pink
+            "rarity_ancient_weapon": 0xeb4b4b,      #Red
+            "rarity_immortal_weapon": 0xfcba03      #Gold
+        }
+
+def get_exterior(wear):    
+    exterior = ''
+    if wear<0.07:
+        exterior = 'Factory New'
+    elif wear>=0.07 and wear<0.15:
+        exterior = 'Minimal Wear'
+    elif wear>=0.15 and wear<0.38:
+        exterior = 'Field-Tested'
+    elif wear>=0.38 and wear<0.45:
+        exterior = 'Well-Worn'
+    else:
+        exterior = 'Battle-Scarred'    
+    return exterior
 class Inventory(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -76,12 +99,12 @@ class Inventory(commands.Cog):
             if connection.is_connected():
                 cursor = connection.cursor()
 
-                query = "SELECT skin_id, wear_amount, pattern_id, image_file FROM server_skins_inv WHERE instance_id = %s"
+                query = "SELECT skin_id, wear_amount, pattern_id, image_file, rarity FROM server_skins_inv WHERE instance_id = %s"
                 params = (inventory_array[index],)
                 cursor.execute(query, params)
                 skin_data = cursor.fetchone()
                 if skin_data:
-                    embed = discord.Embed(title=f"Skin ID: {skin_data[0]}", description=f"Collection: {skin_data[0]}", color=discord.Color.blue())
+                    embed = discord.Embed(title=f"Instance_ID: {inventory_array[index]}", description=f"Condition: {get_exterior(skin_data[1])}", color=COLOURS[skin_data[4]])
                     embed.set_thumbnail(url=skin_data[3])
                     embed.set_image(url=skin_data[3])
                     embed.set_author(name=f"{ctx.author.name} viewed skin", icon_url=ctx.author.avatar.url)
