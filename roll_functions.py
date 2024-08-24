@@ -231,16 +231,16 @@ def gacha():
             cursor.close()
             connection.close()
 
-def insert_skin(skin_id, wear, pattern, owner_id, guild_id, image_url):
+def insert_skin(skin_id, wear, pattern, owner_id, guild_id, image_url, Rarity):
     try:
         connection = get_db_connection()
         
         if connection.is_connected():
             cursor = connection.cursor()
 
-            sql = """INSERT INTO server_skins_inv (skin_id, wear_amount, pattern_id, user_id, server_id)
-                     VALUES (%s, %s, %s, %s, %s)"""
-            data = (skin_id, wear, pattern, owner_id, guild_id)
+            sql = """INSERT INTO server_skins_inv (skin_id, wear_amount, pattern_id, user_id, image_file, server_id, Rarity)
+                     VALUES (%s, %s, %s, %s, %s, %s, %s)"""
+            data = (skin_id, wear, pattern, owner_id, image_url, guild_id , Rarity)
             cursor.execute(sql, data)
             connection.commit()
 
@@ -255,9 +255,6 @@ def insert_skin(skin_id, wear, pattern, owner_id, guild_id, image_url):
             data = (inventory_entry, owner_id, guild_id)
             cursor.execute(sql, data)
 
-            sql = """UPDATE server_skins_inv SET image_file = %s WHERE instance_id = %s"""
-            cursor.execute(sql, (image_url, last_row_id))
-
             connection.commit()
         else:
             print("Error: Unable to connect to MySQL database")
@@ -267,7 +264,6 @@ def insert_skin(skin_id, wear, pattern, owner_id, guild_id, image_url):
         if connection.is_connected():
             cursor.close()
             connection.close()
-
 
 
 def has_rolls(owner_id, guild_id):

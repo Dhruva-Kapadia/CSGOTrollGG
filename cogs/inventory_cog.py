@@ -22,42 +22,36 @@ class Inventory(commands.Cog):
 
                 if inventory_data:
                     inventory_array = inventory_data[0].split(',') if inventory_data[0] else []
-                    inventory_array = [int(item) for item in inventory_array if item]  # Convert to integers
+                    inventory_array = [int(item) for item in inventory_array if item]
 
                     if inventory_array:
                         current_index = 0
                         message = await ctx.send(f"Your inventory for {ctx.guild.name}:")
                         await self.update_inventory_message(message, ctx, inventory_array, current_index)
 
-                        # Add reactions for navigation
                         await message.add_reaction("⬅️")
                         await message.add_reaction("➡️")
 
-                        # Define reaction check function
                         def check(reaction, user):
                             return user == ctx.author and reaction.message.id == message.id and str(reaction.emoji) in ["⬅️", "➡️"]
 
                         while True:
                             try:
-                                reaction, _ = await self.bot.wait_for('reaction_add', timeout=60.0, check=check)
+                                reaction, _ = await self.bot.wait_for('reaction_add', timeout=300.0, check=check)
                                 
                                 if str(reaction.emoji) == "⬅️":
-                                    # Navigate to previous skin
                                     if current_index > 0:
                                         current_index -= 1
                                         await self.update_inventory_message(message, ctx, inventory_array, current_index)
                                 
                                 elif str(reaction.emoji) == "➡️":
-                                    # Navigate to next skin
                                     if current_index < len(inventory_array) - 1:
                                         current_index += 1
                                         await self.update_inventory_message(message, ctx, inventory_array, current_index)
 
-                                # Remove the reaction after processing
                                 await message.remove_reaction(reaction, ctx.author)
                                 
                             except asyncio.TimeoutError:
-                                # Stop listening for reactions after timeout
                                 await message.clear_reactions()
                                 break
                             except Exception as e:
@@ -86,11 +80,10 @@ class Inventory(commands.Cog):
                 params = (inventory_array[index],)
                 cursor.execute(query, params)
                 skin_data = cursor.fetchone()
-
                 if skin_data:
                     embed = discord.Embed(title=f"Skin ID: {skin_data[0]}", description=f"Collection: {skin_data[0]}", color=discord.Color.blue())
                     embed.set_thumbnail(url=skin_data[3])
-                    
+                    embed.set_image(url=skin_data[3])
                     embed.set_author(name=f"{ctx.author.name} viewed skin", icon_url=ctx.author.avatar.url)
                     embed.set_footer(text=f"Index: {index + 1}/{len(inventory_array)}")
 

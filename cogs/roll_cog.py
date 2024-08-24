@@ -32,7 +32,7 @@ class Roll(commands.Cog):
             pattern = random.randint(0, 999)
             case_data = get_case_data(case_id)
 
-            insert_skin(skin_id, wear, pattern, owner_id, guild_id, image_url)
+            insert_skin(skin_id, wear, pattern, owner_id, guild_id, image_url, skin_data['Rarity'])
 
             if COLOURS[skin_data['Rarity']]:
                 embed_color = COLOURS[skin_data['Rarity']]
