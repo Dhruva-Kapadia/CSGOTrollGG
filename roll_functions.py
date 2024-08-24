@@ -9,17 +9,7 @@ from mysql.connector import Error
 import json
 import random
 from user_check import check_user_table
-
-db_config = {
-    'host': 'localhost',
-    'user': 'csuser',
-    'port': 3306,
-    'password': 'cs_sucks',
-    'database': 'cstroll'
-}
-
-def get_db_connection():
-    return mysql.connector.connect(**db_config)
+from db_connect import get_db_connection
 
 def load_json_file(file_path):
     with open(file_path, 'r') as file:
@@ -53,6 +43,11 @@ RARITY_SOUVENIR = {
         "rarity_ancient_weapon": 0.032          #Red
 }
 
+EXTERIOR_ODDS = (['Factory New', 3, 0, 0.07],
+                ['Minimal Wear', 24, 0.07, 0.15], 
+                ['Field-Tested', 33, 0.15, 0.38], 
+                ['Well-Worn', 24, 0.38, 0.45],
+                ['Battle-Scarred', 16, 0.45, 1.00])
     
 def select_standard_rarity():   #Rarity choice for standard cases based on odds
     items = list(RARITY_STANDARD.keys())
@@ -97,7 +92,18 @@ def get_skin_id_with_condition(skin_id, condition):
             cursor.close()
             connection.close()
 
-    
+def generate_wear(skin_data):
+    weights = list(x[1] for x in EXTERIOR_ODDS)
+    wear = 0
+
+    while(True):
+        exterior = random.choices(EXTERIOR_ODDS, weights, k=1)[0]
+        print(exterior[0])
+        if skin_data['Min_wear'] >= exterior[3] or skin_data['Max_wear'] < exterior[2]:
+            continue
+        else:
+            wear = random.uniform(max(skin_data['Min_wear'], exterior[2]), min(skin_data['Max_wear'], exterior[3]))
+            return wear
 
 def get_skin_data(skin_id):
     try:
@@ -172,11 +178,11 @@ def get_exterior(wear):
     exterior = ''
     if wear<0.07:
         exterior = 'Factory New'
-    if wear>=0.07 and wear<0.15:
+    elif wear>=0.07 and wear<0.15:
         exterior = 'Minimal Wear'
-    if wear>=0.15 and wear<0.38:
+    elif wear>=0.15 and wear<0.38:
         exterior = 'Field-Tested'
-    if wear>=0.38 and wear<0.45:
+    elif wear>=0.38 and wear<0.45:
         exterior = 'Well-Worn'
     else:
         exterior = 'Battle-Scarred'    
