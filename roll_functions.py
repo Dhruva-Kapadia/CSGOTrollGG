@@ -98,7 +98,6 @@ def generate_wear(skin_data):
 
     while(True):
         exterior = random.choices(EXTERIOR_ODDS, weights, k=1)[0]
-        print(exterior[0])
         if skin_data['Min_wear'] >= exterior[3] or skin_data['Max_wear'] < exterior[2]:
             continue
         else:
