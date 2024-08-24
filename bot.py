@@ -44,21 +44,31 @@ def run_discord_bot():
     intents.message_content = True
     client = commands.Bot(command_prefix = '>', intents = intents)
 
+    async def reset_can_claim():
+        while True:
+            try:
+                await asyncio.sleep(3600)
+                
+                connection = mysql.connector.connect(**db_config)
+                
+                if connection.is_connected():
+                    cursor = connection.cursor()
+                    cursor.execute("UPDATE server_user SET can_claim = 1 WHERE can_claim = 0")
+                    connection.commit()
+                else:
+                    print("Failed to connect to database")
+            except Exception as e:
+                print(f"An error occurred: {str(e)}")
+            finally:
+                if connection.is_connected():
+                    cursor.close()
+                    connection.close()
+                    print("Connection closed")
+
     @client.event
     async def on_ready():
         await client.change_presence(activity=discord.Game(name='>help'))
         print(f'{client.user.name} is running')
-        async def reset_can_claim():
-            while True:
-                await asyncio.sleep(3600) 
-                connection = get_db_connection()
-                if connection.is_connected():  
-                    cursor = connection.cursor
-                    cursor.execute("UPDATE server_user SET can_claim = 0 WHERE can_claim = 1")
-                    connection.commit()
-                    cursor.close()
-                    connection.close()
-        
         client.loop.create_task(reset_can_claim())
 
     @client.command(aliases=["hi", "hey"])
