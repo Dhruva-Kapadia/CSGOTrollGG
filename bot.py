@@ -1,4 +1,5 @@
 import asyncio
+from sys import argv
 import discord
 from discord.ext import commands 
 from cogs.claim_cog import Claims
@@ -10,6 +11,7 @@ from cogs.timer_cog import Timers
 from dotenv import load_dotenv
 import os
 from cogs.inventory_cog import Inventory
+from cogs.tradeup import Tradeup
 from db_connect import get_db_connection
 
 load_dotenv()
@@ -24,7 +26,7 @@ def run_discord_bot():
     async def reset_can_claim():
         while True:
             try:
-                await asyncio.sleep(3600)
+                await asyncio.sleep(1)
                 
                 connection = get_db_connection()
                 
@@ -49,6 +51,7 @@ def run_discord_bot():
         await client.add_cog(Timers(client))
         await client.add_cog(Claims(client))
         await client.add_cog(Roll(client))
+        await client.add_cog(Tradeup(client))
 
         @client.event
         async def on_ready():

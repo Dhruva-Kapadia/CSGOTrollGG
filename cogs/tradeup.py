@@ -124,34 +124,23 @@ def get_skin_data(skin_id):
             connection.close()
 
 
-def insert_trade_up_skin(skin_id, wear, pattern, owner_id, guild_id, image_url, rarity):
+def insert_trade_up_skin(skin_id, wear, pattern, owner_id, guild_id, image_url, Rarity):
     try:
         connection = get_db_connection()
         
         if connection.is_connected():
             cursor = connection.cursor()
 
-            sql = """INSERT INTO server_skins_inv (skin_id, wear_amount, pattern_id, user_id, server_id)
-                     VALUES (%s, %s, %s, %s, %s)"""
-            data = (skin_id, wear, pattern, owner_id, guild_id, image_url, rarity)
+            sql = """INSERT INTO server_skins_inv (skin_id, wear_amount, pattern_id, user_id, image_file, server_id, Rarity)
+                     VALUES (%s, %s, %s, %s, %s, %s, %s)"""
+            data = (skin_id, wear, pattern, owner_id, image_url, guild_id , Rarity)
             cursor.execute(sql, data)
             connection.commit()
 
             last_row_id = cursor.lastrowid
 
-            sql = """UPDATE server_user SET rolls = rolls - 1 WHERE user_id = %s AND server_id = %s"""
-            data = (owner_id, guild_id)
-            cursor.execute(sql, data)
-
-            sql = """UPDATE server_user SET inventory_array = CONCAT(COALESCE(inventory_array, ''), %s) WHERE user_id = %s AND server_id = %s"""
-            inventory_entry = f"{last_row_id},"
-            data = (inventory_entry, owner_id, guild_id)
-            cursor.execute(sql, data)
-
-            sql = """UPDATE server_skins_inv SET image_file = %s WHERE instance_id = %s"""
-            cursor.execute(sql, (image_url, last_row_id))
-
             connection.commit()
+            return last_row_id
         else:
             print("Error: Unable to connect to MySQL database")
     except mysql.connector.Error as error:
@@ -209,10 +198,10 @@ class Tradeup(commands.Cog):
                         await ctx.send('❌ Error: These items are already of max rarity. You cannot tradeup from these anymore')
                         return
 
-                    skin_id_for_collection = random.choose(args_result)[0]  
+                    skin_id_for_collection = random.choice(args_result)[0]  
                     #RNG choose skin for choosing collection
 
-                    query_tradeup_collection = "SELECT collection_id from Skin where skin_id = %s"
+                    query_tradeup_collection = "SELECT collection_id from skins where skin_id = %s"
                     cursor.execute(query_tradeup_collection, (skin_id_for_collection,))
                     
                     tradeup_collection = cursor.fetchone()[0]
@@ -221,13 +210,13 @@ class Tradeup(commands.Cog):
                     new_rarity = get_next_rarity(rarity_set[0])
                     #Gets the next rarity from current rarity
 
-                    query_tradeup_skin = "SELECT skin_id FROM skin WHERE collection_id = %s AND Rarity = %s"
+                    query_tradeup_skin = "SELECT skin_id FROM skins WHERE collection_id = %s AND Rarity = %s"
                     params = (tradeup_collection, new_rarity)
                     cursor.execute(query_tradeup_skin, params)
                     skins_result = cursor.fetchall()
                     #Fetches all skins from the selected collection with the next rarity 
 
-                    final_skin = random.choose(skins_result)[0]
+                    final_skin = random.choice(skins_result)[0]
                     #Chooses the final skin from the resultant list of skins
 
                     skin_data = get_skin_data(final_skin)
@@ -242,15 +231,21 @@ class Tradeup(commands.Cog):
                     guild_id = ctx.guild.id
                     image_url = get_skin_id_with_condition(final_skin, condition)
 
-                    insert_trade_up_skin(final_skin, wear, pattern, owner_id, guild_id, image_url, new_rarity)
-                    #Insert instance into server_skins_inv
-                    
-                    #Code to remove tradeup argument items from server_skins_inv goes here:
+                    new_skin_id = insert_trade_up_skin(final_skin, wear, pattern, owner_id, guild_id, image_url, new_rarity)
 
-                    #Code to remove tradeup argument items from server_user inventory_array goes here:
+                    if new_skin_id:
+                        updated_inventory = [item for item in inventory if item and item not in args]
+                        updated_inventory.append(str(new_skin_id))
+                        updated_inventory_str = ','.join([item for item in updated_inventory if item])
+                        query_update_inventory = "UPDATE server_user SET inventory_array = %s WHERE user_id = %s AND server_id = %s"
+                        cursor.execute(query_update_inventory, (updated_inventory_str, owner_id, guild_id))
 
-                    #Phatya 👆
+                        query_delete_skins = "DELETE FROM server_skins_inv WHERE instance_id IN (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+                        cursor.execute(query_delete_skins, args)
 
+                        connection.commit()
+
+                    await ctx.send('✅ Trade-up successful! Enjoy your new skin.')
 
                     if COLOURS[skin_data['Rarity']]:
                         embed_color = COLOURS[skin_data['Rarity']]
