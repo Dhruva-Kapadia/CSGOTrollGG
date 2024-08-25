@@ -127,7 +127,7 @@ def get_skin_data(skin_id):
             connection.close()
 
 
-def insert_trade_up_skin(skin_id, wear, pattern, condition, owner_id, guild_id, image_url, Rarity, Skin_desc, skin_type, collection_id, collection, collection_image_file, skin_name):
+def insert_trade_up_skin(skin_id, wear, pattern, condition, image_url, Rarity, owner_id , guild_id, Skin_desc, skin_type, collection_id, collection, collection_image_file, skin_name):
     try:
         connection = get_db_connection()
         
@@ -239,7 +239,7 @@ class Tradeup(commands.Cog):
                     if new_skin_id:
                         updated_inventory = [item for item in inventory if item and item not in args]
                         updated_inventory.append(str(new_skin_id))
-                        updated_inventory_str = ','.join([item for item in updated_inventory if item])
+                        updated_inventory_str = ','.join([item for item in updated_inventory if item]) + ','
                         query_update_inventory = "UPDATE server_user SET inventory_array = %s WHERE user_id = %s AND server_id = %s"
                         cursor.execute(query_update_inventory, (updated_inventory_str, owner_id, guild_id))
 
