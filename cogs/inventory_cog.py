@@ -17,15 +17,15 @@ COLOURS = {
 def get_exterior(wear):    
     exterior = ''
     if wear<0.07:
-        exterior = 'Factory New'
+        exterior = 'FN'
     elif wear>=0.07 and wear<0.15:
-        exterior = 'Minimal Wear'
+        exterior = 'MW'
     elif wear>=0.15 and wear<0.38:
-        exterior = 'Field-Tested'
+        exterior = 'FT'
     elif wear>=0.38 and wear<0.45:
-        exterior = 'Well-Worn'
+        exterior = 'WW'
     else:
-        exterior = 'Battle-Scarred'    
+        exterior = 'BS'    
     return exterior
 class Inventory(commands.Cog):
     def __init__(self, bot):
@@ -99,13 +99,14 @@ class Inventory(commands.Cog):
             if connection.is_connected():
                 cursor = connection.cursor()
 
-                query = "SELECT skin_id, wear_amount, pattern_id, skin_image_file, rarity FROM server_skins_inv WHERE instance_id = %s"
+                query = "SELECT skin_id, wear_amount, pattern_id, skin_image_file, Rarity, skin_name, collection_image_file, skin_desc FROM server_skins_inv WHERE instance_id = %s"
                 params = (inventory_array[index],)
                 cursor.execute(query, params)
                 skin_data = cursor.fetchone()
                 if skin_data:
-                    embed = discord.Embed(title=f"Instance_ID: {inventory_array[index]}", description=f"Condition: {get_exterior(skin_data[1])}", color=COLOURS[skin_data[4]])
-                    embed.set_thumbnail(url=skin_data[3])
+                    embed = discord.Embed(title=f"{skin_data[5]} ({get_exterior(skin_data[1])})", description=f"ID: {inventory_array[index]}", color=COLOURS[skin_data[4]])
+                    embed.set_thumbnail(url=skin_data[6])
+                    embed.add_field(name=f"Float: {skin_data[1]}\nPattern_id: {skin_data[2]}", value=skin_data[7], inline=True)
                     embed.set_image(url=skin_data[3])
                     embed.set_author(name=f"{ctx.author.name} viewed skin", icon_url=ctx.author.avatar.url)
                     embed.set_footer(text=f"Index: {index + 1}/{len(inventory_array)}")

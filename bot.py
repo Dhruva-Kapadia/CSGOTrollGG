@@ -11,6 +11,7 @@ from cogs.timer_cog import Timers
 from dotenv import load_dotenv
 import os
 from cogs.inventory_cog import Inventory
+from cogs.trade_cog import Trade
 from cogs.tradeup import Tradeup
 from db_connect import get_db_connection
 
@@ -52,6 +53,7 @@ def run_discord_bot():
         await client.add_cog(Claims(client))
         await client.add_cog(Roll(client))
         await client.add_cog(Tradeup(client))
+        await client.add_cog(Trade(client))
 
         @client.event
         async def on_ready():
