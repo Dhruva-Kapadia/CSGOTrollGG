@@ -1,3 +1,4 @@
+import json
 import discord
 from discord.ext import commands
 import mysql.connector
@@ -107,13 +108,50 @@ class Trade(commands.Cog):
             if connection.is_connected():
                 cursor = connection.cursor()
 
-                # Update user1's inventory
                 update_user1 = "UPDATE server_skins_inv SET user_id = %s WHERE instance_id = %s"
                 cursor.execute(update_user1, (user2_id, user1_skin_id))
 
-                # Update user2's inventory
                 update_user2 = "UPDATE server_skins_inv SET user_id = %s WHERE instance_id = %s"
                 cursor.execute(update_user2, (user1_id, user2_skin_id))
+
+                fetch_user1_inventory = "SELECT inventory_array FROM server_user WHERE user_id = %s"
+                fetch_user2_inventory = "SELECT inventory_array FROM server_user WHERE user_id = %s"
+                
+                cursor.execute(fetch_user1_inventory, (user1_id,))
+                user1_inventory = cursor.fetchone()[0]
+                
+                cursor.execute(fetch_user2_inventory, (user2_id,))
+                user2_inventory = cursor.fetchone()[0]
+                print("Before Swap:", user1_inventory, user2_inventory)
+
+                user1_inventory_list = [skin.strip() for skin in user1_inventory.split(',') if skin.strip()]
+                user2_inventory_list = [skin.strip() for skin in user2_inventory.split(',') if skin.strip()]
+
+                print("User1 Inventory List Before Swap:", user1_inventory_list)
+                print("User2 Inventory List Before Swap:", user2_inventory_list)
+
+                user1_skin_id = str(user1_skin_id)
+                user2_skin_id = str(user2_skin_id)
+
+                user1_inventory_list = [
+                    user2_skin_id if skin == user1_skin_id else skin
+                    for skin in user1_inventory_list
+                ]
+
+                user2_inventory_list = [
+                    user1_skin_id if skin == user2_skin_id else skin
+                    for skin in user2_inventory_list
+                ]
+                
+                updated_inventory_user1 = ','.join(user1_inventory_list) + ','
+                updated_inventory_user2 = ','.join(user2_inventory_list) + ','
+                
+
+                update_inventory_user1 = "UPDATE server_user SET inventory_array = %s WHERE user_id = %s"
+                update_inventory_user2 = "UPDATE server_user SET inventory_array = %s WHERE user_id = %s"
+                
+                cursor.execute(update_inventory_user1, (updated_inventory_user1, user1_id))
+                cursor.execute(update_inventory_user2, (updated_inventory_user2, user2_id))
 
                 connection.commit()
         except Error as e:
