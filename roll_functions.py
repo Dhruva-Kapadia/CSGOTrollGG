@@ -234,16 +234,16 @@ def gacha():
             cursor.close()
             connection.close()
 
-def insert_skin(skin_id, wear, pattern, condition, owner_id, guild_id, image_url, Rarity, Skin_desc, skin_type, collection_id, collection, collection_image_file):
+def insert_skin(skin_id, wear, pattern, condition, owner_id, guild_id, image_url, Rarity, Skin_desc, skin_type, collection_id, collection, collection_image_file, skin_name):
     try:
         connection = get_db_connection()
         
         if connection.is_connected():
             cursor = connection.cursor()
 
-            sql = """INSERT INTO server_skins_inv (skin_id, wear_amount, pattern_id, `condition`, skin_image_file, Rarity, user_id, server_id, skin_desc, skin_type, collection_id, collection_name, collection_image_file)
-                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
-            data = (skin_id, wear, pattern, condition, image_url, Rarity, owner_id , guild_id, Skin_desc, skin_type, collection_id, collection, collection_image_file )
+            sql = """INSERT INTO server_skins_inv (skin_id, wear_amount, pattern_id, `condition`, skin_image_file, Rarity, user_id, server_id, skin_desc, skin_type, collection_id, collection_name, collection_image_file, skin_name)
+                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+            data = (skin_id, wear, pattern, condition, image_url, Rarity, owner_id , guild_id, Skin_desc, skin_type, collection_id, collection, collection_image_file, skin_name )
             cursor.execute(sql, data)
             connection.commit()
 

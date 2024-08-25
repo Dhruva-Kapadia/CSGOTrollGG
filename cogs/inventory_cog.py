@@ -99,7 +99,7 @@ class Inventory(commands.Cog):
             if connection.is_connected():
                 cursor = connection.cursor()
 
-                query = "SELECT skin_id, wear_amount, pattern_id, image_file, rarity FROM server_skins_inv WHERE instance_id = %s"
+                query = "SELECT skin_id, wear_amount, pattern_id, skin_image_file, rarity FROM server_skins_inv WHERE instance_id = %s"
                 params = (inventory_array[index],)
                 cursor.execute(query, params)
                 skin_data = cursor.fetchone()

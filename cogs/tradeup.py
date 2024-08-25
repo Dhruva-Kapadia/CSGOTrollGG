@@ -127,16 +127,16 @@ def get_skin_data(skin_id):
             connection.close()
 
 
-def insert_trade_up_skin(skin_id, wear, pattern, condition, owner_id, guild_id, image_url, Rarity, Skin_desc, skin_type, collection_id, collection, collection_image_file):
+def insert_trade_up_skin(skin_id, wear, pattern, condition, owner_id, guild_id, image_url, Rarity, Skin_desc, skin_type, collection_id, collection, collection_image_file, skin_name):
     try:
         connection = get_db_connection()
         
         if connection.is_connected():
             cursor = connection.cursor()
 
-            sql = """INSERT INTO server_skins_inv (skin_id, wear_amount, pattern_id, `condition`, skin_image_file, Rarity, user_id, server_id, skin_desc, skin_type, collection_id, collection_name, collection_image_file)
-                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
-            data = (skin_id, wear, pattern, condition, image_url, Rarity, owner_id , guild_id, Skin_desc, skin_type, collection_id, collection, collection_image_file )
+            sql = """INSERT INTO server_skins_inv (skin_id, wear_amount, pattern_id, `condition`, skin_image_file, Rarity, user_id, server_id, skin_desc, skin_type, collection_id, collection_name, collection_image_file, skin_name)
+                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+            data = (skin_id, wear, pattern, condition, image_url, Rarity, owner_id , guild_id, Skin_desc, skin_type, collection_id, collection, collection_image_file, skin_name)
             cursor.execute(sql, data)
             connection.commit()
 
@@ -234,7 +234,7 @@ class Tradeup(commands.Cog):
                     guild_id = ctx.guild.id
                     image_url = get_skin_id_with_condition(final_skin, condition)
 
-                    new_skin_id = insert_trade_up_skin(final_skin, wear, pattern, condition,  image_url, new_rarity, owner_id, guild_id, skin_data['Skin_desc'], skin_data['skin_type'], skin_data['collection_id'], skin_data['collection'], skin_data['collection_image_file'])
+                    new_skin_id = insert_trade_up_skin(final_skin, wear, pattern, condition,  image_url, new_rarity, owner_id, guild_id, skin_data['Skin_desc'], skin_data['skin_type'], skin_data['collection_id'], skin_data['collection'], skin_data['collection_image_file'], skin_data['Skin_Name'])
 
                     if new_skin_id:
                         updated_inventory = [item for item in inventory if item and item not in args]
