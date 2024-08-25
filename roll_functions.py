@@ -110,7 +110,7 @@ def get_skin_data(skin_id):
         
         if connection.is_connected():
             cursor = connection.cursor()
-            query_skin = "SELECT Skin_Name, collection_id, Rarity, max_wear, min_wear FROM skins WHERE skin_id = %s"
+            query_skin = "SELECT Skin_Name, collection_id, Rarity, max_wear, min_wear, skin_type, Skin_desc FROM skins WHERE skin_id = %s"
             skin_values = (skin_id,)
             cursor.execute(query_skin, skin_values)
             
@@ -128,11 +128,14 @@ def get_skin_data(skin_id):
             
             if result_1 and result_2:
                 return {'Skin_Name': result_1[0],
+                        'collection_id': collection_id,
                         'collection': result_2[0], 
                         'collection_image_file': result_2[1], 
                         'Rarity': result_1[2], 
-                        'Max_wear': result_1[3], 
-                        'Min_wear': result_1[4]
+                        'Max_wear': result_1[3],
+                        'Min_wear': result_1[4],
+                        'skin_type': result_1[5],
+                        'Skin_desc': result_1[6],
                         }
             else:
                 print("No skin found with ID")
@@ -231,16 +234,16 @@ def gacha():
             cursor.close()
             connection.close()
 
-def insert_skin(skin_id, wear, pattern, owner_id, guild_id, image_url, Rarity):
+def insert_skin(skin_id, wear, pattern, condition, owner_id, guild_id, image_url, Rarity, Skin_desc, skin_type, collection_id, collection, collection_image_file):
     try:
         connection = get_db_connection()
         
         if connection.is_connected():
             cursor = connection.cursor()
 
-            sql = """INSERT INTO server_skins_inv (skin_id, wear_amount, pattern_id, user_id, image_file, server_id, Rarity)
-                     VALUES (%s, %s, %s, %s, %s, %s, %s)"""
-            data = (skin_id, wear, pattern, owner_id, image_url, guild_id , Rarity)
+            sql = """INSERT INTO server_skins_inv (skin_id, wear_amount, pattern_id, `condition`, skin_image_file, Rarity, user_id, server_id, skin_desc, skin_type, collection_id, collection_name, collection_image_file)
+                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+            data = (skin_id, wear, pattern, condition, image_url, Rarity, owner_id , guild_id, Skin_desc, skin_type, collection_id, collection, collection_image_file )
             cursor.execute(sql, data)
             connection.commit()
 
