@@ -14,6 +14,9 @@ class HelpCommand(commands.Cog):
             {"name": "c, claim", "description": "Claim 10 rolls every hour"},
             {"name": "t, timer", "description": "Check your claim status and remaining rolls"},
             {"name": "r, R, roll", "description": "Roll to get one of the skins from CS"},
+            {"name": "tu", "description": "insert any 10 skins of the same rarity and get one higer rarity skin"},
+            {"name": "tr", "description": "trade with any member using the instance of the skin(>tr @mention 1(id))"},
+            {"name": "i", "description": "see your invetory or mention to see the mentioned user's inventory"},
         ]
 
         for command in commands_list:
