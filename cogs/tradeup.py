@@ -8,8 +8,8 @@ from db_connect import get_db_connection
 
 COLOURS = {
             "rarity_common_weapon": 0xb0c3d9,       #Gray
-            "rarity_uncommon_weapon": 0x5e98d9,     #Light_Blue
-            "rarity_rare_weapon": 0x4b69ff,         #Navy_Blue
+            "rarity_uncommon_weapon": 0x5e98d9,     #Blue
+            "rarity_rare_weapon": 0x4b69ff,         #Navy
             "rarity_mythical_weapon": 0x8847ff,     #Purple
             "rarity_legendary_weapon": 0xd32ce6,    #Pink
             "rarity_ancient_weapon": 0xeb4b4b,      #Red
@@ -225,8 +225,7 @@ class Tradeup(commands.Cog):
                     skin_data = get_skin_data(final_skin)
 
                     wear_list = [row[1] for row in args_result]
-                    wear = sum(wear_list)/10
-                    #NOTE: Wear logic to be updated for non standard min and max wear values
+                    wear = skin_data['Min_wear'] + (skin_data['Max_wear'] - skin_data['Min_wear']) * sum(wear_list)/10
                     
                     condition = get_exterior(wear)
                     pattern = random.randint(0,999)

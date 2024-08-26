@@ -2,6 +2,7 @@
   {
     "pool_id": 1,
     "souvenir": 0,
+    "description": "Has the bravo case, Kilowatt, recoil, revolution, fracture, dreams and nightmares",
     "pool": [
       {
         "id": "crate-4904",
@@ -26,6 +27,103 @@
       {
         "id": "crate-4003",
         "odd": 5
+      }
+    ]
+  },
+  {
+    "pool_id": 2,
+    "souvenir": 0,
+    "description": "Has the norse case, glove case, Breakout, Broken Fang, Wildfire case",
+    "pool":[
+      {
+        "id": "crate-4000",
+        "odds": 5
+      },
+      {
+        "id": "crate-4288",
+        "odds": 19
+      },
+      {
+        "id": "crate-4018",
+        "odds":19
+      },
+      {
+        "id": "crate-4717",
+        "odds": 19
+      },
+      {
+        "id": "crate-4187",
+        "odds": 19
+      },
+      {
+        "id": "crate-4352",
+        "odds": 19
+      }
+    ]
+  },
+  {
+    "pool_id":3,
+    "souvenir":0,
+    "description": "Has the Weapons Case 1, spectrum, revolver, hydra, chroma, shattered web",
+    "pool":[
+      {
+        "id": "crate-4001",
+        "odds": 5
+      },
+      {
+        "id": "crate-4351",
+        "odds":19
+      },
+      {
+        "id": "crate-4186",
+        "odds":19
+      },
+      {
+        "id": "crate-4352",
+        "odds": 19
+      },
+      {
+        "id": "crate-4061",
+        "odds":19
+      },
+      {
+        "id": "crate-4620",
+        "odds": 19
+      }
+    ]
+  },
+  {
+    "pool_id": 4,
+    "souvenir": 1,
+    "description": "Souvenir Packages for Kato 2019 Inferno, Overpass, Dust_II, Mirage, Cache, Train, Nuke",
+    "pool":[
+      {
+        "id": "crate-4596",
+        "odds": 14
+      },
+      {
+        "id": "crate-4595",
+        "odds":14
+      },
+      {
+        "id":"crate-4594",
+        "odds":14
+      },
+      {
+        "id": "crate-4591",
+        "odds": 14
+      },
+      {
+        "id": "crate-4592",
+        "odds": 14
+      }
+      {
+        "id":"crate-4593",
+        "odds": 14
+      },
+      {
+        "id": "crate-4590",
+        "odds": 16
       }
     ]
   }
